@@ -1,1 +1,1 @@
-﻿Console.WriteLine("universidad estatal amazonica");
+﻿Console.WriteLine("Universidad Estatal Amazonica");
