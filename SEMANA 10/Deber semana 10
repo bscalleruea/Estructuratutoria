@@ -1,0 +1,64 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public class CampañaVacunacion
+{
+    public static void Main(string[] args)
+    {
+        // Crear conjuntos ficticios de ciudadanos
+        HashSet<string> ciudadanos = GenerarCiudadanos(500);
+        HashSet<string> pfizerVacunados = GenerarCiudadanos(75);
+        HashSet<string> astrazenecaVacunados = GenerarCiudadanos(75);
+
+        // Crear conjuntos ficticios de ciudadanos vacunados con ambas dosis
+        HashSet<string> dobleVacunados = GenerarCiudadanos(300);
+
+        // Aplicar operaciones de conjuntos
+        HashSet<string> noVacunados = new HashSet<string>(ciudadanos);
+        noVacunados.ExceptWith(pfizerVacunados);
+        noVacunados.ExceptWith(astrazenecaVacunados);
+        noVacunados.ExceptWith(dobleVacunados);
+
+        HashSet<string> soloPfizer = new HashSet<string>(pfizerVacunados);
+        soloPfizer.ExceptWith(astrazenecaVacunados);
+        soloPfizer.ExceptWith(dobleVacunados);
+
+        HashSet<string> soloAstrazeneca = new HashSet<string>(astrazenecaVacunados);
+        soloAstrazeneca.ExceptWith(pfizerVacunados);
+        soloAstrazeneca.ExceptWith(dobleVacunados);
+
+        // Imprimir resultados
+        Console.WriteLine("Ciudadanos no vacunados:");
+        ImprimirConjunto(noVacunados);
+
+        Console.WriteLine("\nCiudadanos con ambas dosis:");
+        ImprimirConjunto(dobleVacunados);
+
+        Console.WriteLine("\nCiudadanos vacunados solo con Pfizer:");
+        ImprimirConjunto(soloPfizer);
+
+        Console.WriteLine("\nCiudadanos vacunados solo con AstraZeneca:");
+        ImprimirConjunto(soloAstrazeneca);
+    }
+
+    // Método para generar un conjunto ficticio de ciudadanos
+    public static HashSet<string> GenerarCiudadanos(int cantidad)
+    {
+        HashSet<string> conjunto = new HashSet<string>();
+        for (int i = 1; i <= cantidad; i++)
+        {
+            conjunto.Add($"Ciudadano {i}");
+        }
+        return conjunto;
+    }
+
+    // Método para imprimir un conjunto de ciudadanos
+    public static void ImprimirConjunto(HashSet<string> conjunto)
+    {
+        foreach (string ciudadano in conjunto)
+        {
+            Console.WriteLine(ciudadano);
+        }
+    }
+}
