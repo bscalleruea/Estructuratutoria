@@ -2,47 +2,40 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public class CampañaVacunacion
+public class CampañaVacunacion
 {
     public static void Main(string[] args)
     {
-        // Crear conjuntos ficticios de ciudadanos
+        // Crear conjunto de 500 ciudadanos únicos
         HashSet<string> ciudadanos = GenerarCiudadanos(500);
-        HashSet<string> pfizerVacunados = GenerarCiudadanos(75);
-        HashSet<string> astrazenecaVacunados = GenerarCiudadanos(75);
 
-        // Crear conjuntos ficticios de ciudadanos vacunados con ambas dosis
-        HashSet<string> dobleVacunados = GenerarCiudadanos(300);
+        // Seleccionar 100 ciudadanos vacunados con ambas dosis
+        HashSet<string> dobleVacunados = SeleccionarAleatoriamente(ciudadanos, 100);
 
-        // Aplicar operaciones de conjuntos
-        HashSet<string> noVacunados = new HashSet<string>(ciudadanos);
-        noVacunados.ExceptWith(pfizerVacunados);
-        noVacunados.ExceptWith(astrazenecaVacunados);
-        noVacunados.ExceptWith(dobleVacunados);
+        // Seleccionar 75 ciudadanos vacunados con Pfizer (excluyendo los doble vacunados)
+        HashSet<string> pfizerVacunados = SeleccionarAleatoriamente(ciudadanos.Except(dobleVacunados), 75);
 
-        HashSet<string> soloPfizer = new HashSet<string>(pfizerVacunados);
-        soloPfizer.ExceptWith(astrazenecaVacunados);
-        soloPfizer.ExceptWith(dobleVacunados);
+        // Seleccionar 75 ciudadanos vacunados con AstraZeneca (excluyendo los doble vacunados)
+        HashSet<string> astrazenecaVacunados = SeleccionarAleatoriamente(ciudadanos.Except(dobleVacunados), 75);
 
-        HashSet<string> soloAstrazeneca = new HashSet<string>(astrazenecaVacunados);
-        soloAstrazeneca.ExceptWith(pfizerVacunados);
-        soloAstrazeneca.ExceptWith(dobleVacunados);
+        // Calcular ciudadanos no vacunados (total - todos los vacunados)
+        HashSet<string> vacunados = new HashSet<string>(pfizerVacunados.Union(astrazenecaVacunados).Union(dobleVacunados));
+        HashSet<string> noVacunados = new HashSet<string>(ciudadanos.Except(vacunados));
+
+        // Ciudadanos vacunados solo con Pfizer
+        HashSet<string> soloPfizer = new HashSet<string>(pfizerVacunados.Except(dobleVacunados));
+
+        // Ciudadanos vacunados solo con AstraZeneca
+        HashSet<string> soloAstrazeneca = new HashSet<string>(astrazenecaVacunados.Except(dobleVacunados));
 
         // Imprimir resultados
-        Console.WriteLine("Ciudadanos no vacunados:");
-        ImprimirConjunto(noVacunados);
-
-        Console.WriteLine("\nCiudadanos con ambas dosis:");
-        ImprimirConjunto(dobleVacunados);
-
-        Console.WriteLine("\nCiudadanos vacunados solo con Pfizer:");
-        ImprimirConjunto(soloPfizer);
-
-        Console.WriteLine("\nCiudadanos vacunados solo con AstraZeneca:");
-        ImprimirConjunto(soloAstrazeneca);
+        ImprimirResultado("Ciudadanos no vacunados:", noVacunados);
+        ImprimirResultado("Ciudadanos con ambas dosis:", dobleVacunados);
+        ImprimirResultado("Ciudadanos vacunados solo con Pfizer:", soloPfizer);
+        ImprimirResultado("Ciudadanos vacunados solo con AstraZeneca:", soloAstrazeneca);
     }
 
-    // Método para generar un conjunto ficticio de ciudadanos
+    // Método para generar ciudadanos
     public static HashSet<string> GenerarCiudadanos(int cantidad)
     {
         HashSet<string> conjunto = new HashSet<string>();
@@ -53,12 +46,29 @@ public class CampañaVacunacion
         return conjunto;
     }
 
-    // Método para imprimir un conjunto de ciudadanos
-    public static void ImprimirConjunto(HashSet<string> conjunto)
+    // Método para seleccionar un número aleatorio de ciudadanos sin repetir
+    public static HashSet<string> SeleccionarAleatoriamente(IEnumerable<string> poblacion, int cantidad)
     {
+        HashSet<string> seleccionados = new HashSet<string>();
+        Random rand = new Random();
+        List<string> listaPoblacion = poblacion.ToList();
+
+        while (seleccionados.Count < cantidad && listaPoblacion.Count > 0)
+        {
+            string seleccionado = listaPoblacion[rand.Next(listaPoblacion.Count)];
+            seleccionados.Add(seleccionado);
+        }
+
+        return seleccionados;
+    }
+
+    // Método para imprimir los resultados
+    public static void ImprimirResultado(string titulo, HashSet<string> conjunto)
+    {
+        Console.WriteLine($"\n{titulo} ({conjunto.Count} ciudadanos):");
         foreach (string ciudadano in conjunto)
         {
             Console.WriteLine(ciudadano);
-        }
-    }
+        }
+    }
 }
